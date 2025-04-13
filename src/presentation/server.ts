@@ -1,6 +1,7 @@
 import express, { Router } from 'express';
 import path from 'path';
-
+import cors from "cors";
+import cookieParser from 'cookie-parser';
 interface Options {
   port: number;
   routes: Router;
@@ -29,6 +30,11 @@ export class Server {
     
 
     //* Middlewares
+    this.app.use(cors({
+      origin: 'http://localhost:3000', //cambiar el origtin por la url del front
+      credentials: true
+    }));
+  this.app.use
     this.app.use( express.json() ); // raw
     this.app.use( express.urlencoded({ extended: true }) ); // x-www-form-urlencoded
 

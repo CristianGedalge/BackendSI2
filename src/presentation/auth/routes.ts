@@ -11,9 +11,8 @@ export class Authroutes{
         const controller =new AuthController(authService);
         router.post('/login',controller.loginUser)
         router.post('/register',controller.registerUser);
-        // router.get('/login',)
-
-
+         router.get('/getUsers',controller.getUser)
+         router.patch('/cambPassword',controller.cambiarPassword)
         return router;
     }
 }

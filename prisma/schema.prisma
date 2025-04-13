@@ -7,9 +7,114 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model administrador {
+  id_admin Int     @id
+  usuario  usuario @relation(fields: [id_admin], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model ayudante {
+  id_ayudante   Int      @id
+  ci            String?  @db.VarChar(50)
+  direccion     String?
+  estado        String?  @db.VarChar(50)
+  media_puntaje Decimal? @db.Decimal(3, 2)
+  usuario       usuario  @relation(fields: [id_ayudante], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model bitacora_usuario {
+  id          Int       @id @default(autoincrement())
+  id_usuario  Int?
+  tipo_sesion String?   @db.VarChar(50)
+  ip          String?   @db.VarChar(50)
+  fecha       DateTime? @db.Date
+  hora        DateTime? @db.Time(6)
+  usuario     usuario?  @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model chofer {
+  id_chofer     Int      @id
+  ci            String?  @db.VarChar(50)
+  direccion     String?
+  estado        String?  @db.VarChar(50)
+  media_puntaje Decimal? @db.Decimal(3, 2)
+  usuario       usuario  @relation(fields: [id_chofer], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model cliente {
+  id_usuario Int     @id
+  usuario    usuario @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model imagen {
+  id          Int       @id @default(autoincrement())
+  dir_imagen  String?
+  vehiculo_id Int?
+  vehiculo    vehiculo? @relation(fields: [vehiculo_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model permiso {
+  id          Int           @id @default(autoincrement())
+  nombre      String        @db.VarChar(100)
+  rol_permiso rol_permiso[]
+}
+
+model rol {
+  id          Int           @id @default(autoincrement())
+  nombre      String        @db.VarChar(100)
+  rol_permiso rol_permiso[]
+  usuario     usuario[]
+}
+
+model rol_permiso {
+  rol_id     Int
+  permiso_id Int
+  estado     Int?    @default(1) @db.SmallInt
+  permiso    permiso @relation(fields: [permiso_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  rol        rol     @relation(fields: [rol_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([rol_id, permiso_id])
+}
+
+model telefono {
+  id         Int      @id @default(autoincrement())
+  num        String?
+  id_usuario Int?
+  usuario    usuario? @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model tipo_vehiculo {
+  id       Int        @id @default(autoincrement())
+  nombre   String?    @db.VarChar(100)
+  vehiculo vehiculo[]
+}
+
 model usuario {
-  id_user  Int    @id @default(autoincrement())
-  nombre   String @db.VarChar(100)
-  email    String @db.VarChar(100)
-  password String
+  id               Int                @id @default(autoincrement())
+  nombre           String             @db.VarChar(100)
+  email            String             @db.VarChar(150)
+  password         String
+  profile_icon     String?
+  estado           Int?               @default(1) @db.SmallInt
+  rol_id           Int?
+  administrador    administrador?
+  ayudante         ayudante?
+  bitacora_usuario bitacora_usuario[]
+  chofer           chofer?
+  cliente          cliente?
+  telefono         telefono[]
+  rol              rol?               @relation(fields: [rol_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model vehiculo {
+  id                Int            @id @default(autoincrement())
+  nombre            String?        @db.VarChar(100)
+  volumen           Decimal?       @db.Decimal
+  peso              Decimal?       @db.Decimal
+  coste_kilometraje Decimal?       @db.Decimal
+  placa             String?        @db.VarChar(50)
+  precio            Decimal?       @db.Decimal
+  tipo_vehiculo_id  Int?
+  estado            Int?           @default(1) @db.SmallInt
+  imagen            imagen[]
+  tipo_vehiculo     tipo_vehiculo? @relation(fields: [tipo_vehiculo_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
